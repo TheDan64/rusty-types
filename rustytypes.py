@@ -3,14 +3,24 @@
 from typing import Any, Dict, List
 
 
-class Final:
-    __slots__ = ()
-
+class Uninstantiable:
     def __new__(self, *args, **kwargs):
         raise TypeError("Cannot instantiate %r" % self.__class__)
 
 
-class ResultMeta(type):
+class BaseMeta(type):
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def __repr__(self):
+        return "{}.{}".format(self.__module__, getattr(self, "__qualname__", self.__name__))
+
+
+class EitherMeta(BaseMeta):
+    pass
+
+
+class ResultMeta(EitherMeta):
     # TODO: Turn this into Either, and derive as Result
     def __new__(cls, name, bases, namespace, parameters=None):
         if parameters is None:
@@ -33,9 +43,9 @@ class ResultMeta(type):
             return False
 
         if isinstance(obj, Ok):
-            return isinstance(obj.value(), self.__ok_type__)
+            return isinstance(obj.value, self.__ok_type__)
         if isinstance(obj, Err):
-            return isinstance(obj.value(), self.__err_type__)
+            return isinstance(obj.value, self.__err_type__)
 
         # Raise NotImplemented?
         raise TypeError("Result cannot be used with isinstance().")
@@ -47,12 +57,11 @@ class ResultMeta(type):
     def __getitem__(self, parameters):
         if not isinstance(parameters, tuple) or len(parameters) != 2:
             raise TypeError("A Result must be constructed as Result[ok_type, err_type]")
+
         return self.__class__(self.__name__, self.__bases__, dict(self.__dict__), parameters)
 
     def __repr__(self):
-        # r = super().__repr()
-        # TODO: Move to base meta class:
-        r = "{}.{}".format(self.__module__, getattr(self, "__qualname__", self.__name__))
+        r = super().__repr__()
 
         if self.__ok_type__ and self.__err_type__:
             r += "[{}, {}]".format(self.__ok_type__.__name__, self.__err_type__.__name__)
@@ -60,7 +69,7 @@ class ResultMeta(type):
         return r
 
 
-class Result(Final, metaclass=ResultMeta):
+class Result(Uninstantiable, metaclass=ResultMeta):
     __ok_type__ = None
     __err_type__ = None
 
