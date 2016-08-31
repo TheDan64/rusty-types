@@ -13,30 +13,81 @@ class BaseMeta(type):
         pass
 
     def __repr__(self):
-        return "{}.{}".format(self.__module__, getattr(self, "__qualname__", self.__name__))
+        return "{}.{}".format(self.__module__, self.qualname)
+
+    @property
+    def qualname(self):
+        return getattr(self, "__qualname__", self.__name__)
 
 
 class EitherMeta(BaseMeta):
-    pass
+    __left_name__ = "__left_type__"
+    __right_name__ = "__right_type__"
 
-
-class ResultMeta(EitherMeta):
-    # TODO: Turn this into Either, and derive as Result
     def __new__(cls, name, bases, namespace, parameters=None):
         if parameters is None:
             return super().__new__(cls, name, bases, namespace)
 
         if not isinstance(parameters, tuple):
-            raise TypeError("A Result must be constructed as Result[ok_type, err_type]")
+            raise TypeError("A {} must be constructed as {}[left_type, right_type]".format(cls.qualname, cls.qualname))
 
-        ok_type, err_type = parameters
+        left_type, right_type = parameters
         # TODO: Set None to type(None)
 
         self = super().__new__(cls, name, bases, {})
-        self.__ok_type__ = ok_type
-        self.__err_type__ = err_type
+
+        setattr(self, cls.__left_name__, left_type)
+        setattr(self, cls.__right_name__, right_type)
 
         return self
+
+    def __repr__(self):
+        r = super().__repr__()
+
+        if self.__left_type__ and self.__right_type__:
+            r += "[{}, {}]".format(self.__left_type__.__name__, self.__right_type__.__name__)
+
+        return r
+
+
+class Either(Uninstantiable, metaclass=EitherMeta):
+    __left_type__ = None
+    __right_type__ = None
+
+
+class Left:
+    def __init__(self, value=None):
+        self._value = value
+
+    def is_left(self):
+        return True
+
+    def is_right(self):
+        return False
+
+    @property
+    def value(self):
+        return self._value
+
+
+class Right:
+    def __init__(self, value=None):
+        self._value = value
+
+    def is_left(self):
+        return False
+
+    def is_right(self):
+        return True
+
+    @property
+    def value(self):
+        return self._value
+
+
+class ResultMeta(EitherMeta):
+    __left_name__ = "__ok_type__"
+    __right_name__ = "__err_type__"
 
     def __instancecheck__(self, obj):
         if not self.__ok_type__ or not self.__err_type__:
@@ -61,7 +112,7 @@ class ResultMeta(EitherMeta):
         return self.__class__(self.__name__, self.__bases__, dict(self.__dict__), parameters)
 
     def __repr__(self):
-        r = super().__repr__()
+        r = super(EitherMeta, self).__repr__()
 
         if self.__ok_type__ and self.__err_type__:
             r += "[{}, {}]".format(self.__ok_type__.__name__, self.__err_type__.__name__)
@@ -74,34 +125,20 @@ class Result(Uninstantiable, metaclass=ResultMeta):
     __err_type__ = None
 
 
-class Ok:
-    def __init__(self, value=None):
-        self._value = value
-
+class Ok(Left):
     def is_ok(self):
         return True
 
     def is_err(self):
         return False
 
-    @property
-    def value(self):
-        return self._value
 
-
-class Err:
-    def __init__(self, value=None):
-        self._value = value
-
+class Err(Right):
     def is_ok(self):
         return False
 
     def is_err(self):
         return True
-
-    @property
-    def value(self):
-        return self._value
 
 print(Result)
 print(Result[int, str], type(Result[int, str]))
