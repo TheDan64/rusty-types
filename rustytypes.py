@@ -3,12 +3,15 @@
 from typing import Any, Dict, List
 
 
-class Uninstantiable:
+class _Uninstantiable:
     def __new__(self, *args, **kwargs):
         raise TypeError("Cannot instantiate %r" % self.__class__)
 
 
-class BaseMeta(type):
+class _BaseMeta(type):
+    """ Metaclass for every type defined here.
+
+    """
     def __init__(self, *args, **kwargs):
         pass
 
@@ -20,37 +23,36 @@ class BaseMeta(type):
         return getattr(self, "__qualname__", self.__name__)
 
 
-class Left:
+class _BasePositional:
     def __init__(self, value=None):
         self._value = value
 
+    @property
+    def value(self):
+        return self._value
+
+    @property
+    def qualname(self):
+        return getattr(self, "__qualname__", self.__name__)
+
+
+class Left(_BasePositional):
     def is_left(self):
         return True
 
     def is_right(self):
         return False
 
-    @property
-    def value(self):
-        return self._value
 
-
-class Right:
-    def __init__(self, value=None):
-        self._value = value
-
+class Right(_BasePositional):
     def is_left(self):
         return False
 
     def is_right(self):
         return True
 
-    @property
-    def value(self):
-        return self._value
 
-
-class EitherMeta(BaseMeta):
+class _EitherMeta(_BaseMeta):
     __left_class__ = Left
     __right_class__ = Right
 
@@ -59,7 +61,10 @@ class EitherMeta(BaseMeta):
             return super().__new__(cls, name, bases, namespace)
 
         if not isinstance(parameters, tuple):
-            raise TypeError("A {} must be constructed as {}[left_type, right_type]".format(cls.qualname, cls.qualname))
+            raise TypeError("A {} must be constructed as {}[{}_type, {}_type]".format(cls.qualname,
+                                                                                      cls.qualname,
+                                                                                      cls.__left_class__.qualname,
+                                                                                      cls.__right_class__.qualname))
 
         left_type, right_type = parameters
 
@@ -80,7 +85,8 @@ class EitherMeta(BaseMeta):
         r = super().__repr__()
 
         if self.__left_type__ and self.__right_type__:
-            r += "[{}, {}]".format(self.__left_type__.__name__, self.__right_type__.__name__)
+            r += "[{}, {}]".format(self.__left_type__.__name__,
+                                   self.__right_type__.__name__)
 
         return r
 
@@ -98,17 +104,21 @@ class EitherMeta(BaseMeta):
 
     def __getitem__(self, parameters):
         if not isinstance(parameters, tuple) or len(parameters) != 2:
-            raise TypeError("A {} must be constructed as {}[ok_type, err_type]".format("FIXME", "FIXME"))
+            # FIXME
+            raise TypeError("A {} must be constructed as {}[{}_type, {}_type]".format(self.qualname,
+                                                                                      self.qualname,
+                                                                                      self.__left_class__.qualname,
+                                                                                      self.__right_class__.qualname))
 
         return self.__class__(self.__name__, self.__bases__, dict(self.__dict__), parameters)
 
 
-class Either(Uninstantiable, metaclass=EitherMeta):
+class Either(_Uninstantiable, metaclass=_EitherMeta):
     __left_type__ = None
     __right_type__ = None
 
 
-class Ok(Left):
+class Ok(_BasePositional):
     def is_ok(self):
         return True
 
@@ -116,7 +126,7 @@ class Ok(Left):
         return False
 
 
-class Err(Right):
+class Err(_BasePositional):
     def is_ok(self):
         return False
 
@@ -124,7 +134,7 @@ class Err(Right):
         return True
 
 
-class ResultMeta(EitherMeta):
+class _ResultMeta(_EitherMeta):
     __left_class__ = Ok
     __right_class__ = Err
 
@@ -133,7 +143,7 @@ class ResultMeta(EitherMeta):
             return True
 
 
-class Result(Either, metaclass=ResultMeta):
+class Result(Either, metaclass=_ResultMeta):
     pass
 
 
