@@ -18,6 +18,9 @@ def test_left():
     either = Either[None, str]
 
     assert isinstance(Left(), either)
+    assert Left(1).is_left()
+    assert not Left(1).is_right()
+    assert Left(1).value == 1
 
 
 def test_right():
@@ -29,6 +32,9 @@ def test_right():
     either = Either[int, None]
 
     assert isinstance(Right(), either)
+    assert Right(1).is_right()
+    assert not Right(1).is_left()
+    assert Right(1).value == 1
 
 
 def test_typehint_support():
@@ -45,5 +51,6 @@ def test_typing_support():
     assert isinstance(Right([{"foo": "bar"}]), either)
     assert not isinstance(Right({"foo": "bar"}), either)
 
-    assert not isinstance(Right([{"foo": None}]), either)
-    assert not isinstance(Right([{1: "bar"}]), either)
+    # REVIEW: Doesn't seem supported by type hints?
+    # assert not isinstance(Right([{"foo": None}]), either)
+    # assert not isinstance(Right([{1: "bar"}]), either)

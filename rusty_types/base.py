@@ -20,6 +20,10 @@ class _BaseMeta(type):
     def qualname(self):
         return getattr(self, "__qualname__", self.__name__)
 
+    def __subclasscheck__(self, cls):  # FIXME
+        if cls is Any:
+            return True
+
 
 class _BasePositional:
     def __init__(self, value=None):
