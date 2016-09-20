@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+# from typing import Any, Dict, List
 
 
 class _Uninstantiable:
@@ -21,8 +21,9 @@ class _BaseMeta(type):
         return getattr(self, "__qualname__", self.__name__)
 
     def __subclasscheck__(self, cls):  # FIXME
-        if cls is Any:
-            return True
+        # if cls is Any:
+        #     return True
+        return True
 
 
 class _BasePositional:
