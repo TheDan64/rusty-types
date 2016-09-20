@@ -51,6 +51,6 @@ def test_typing_support():
     assert isinstance(Right([{"foo": "bar"}]), either)
     assert not isinstance(Right({"foo": "bar"}), either)
 
-    # REVIEW: Doesn't seem supported by type hints?
+    # REVIEW: Doesn't seem supported by typings?
     # assert not isinstance(Right([{"foo": None}]), either)
     # assert not isinstance(Right([{1: "bar"}]), either)
