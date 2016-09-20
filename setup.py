@@ -6,9 +6,8 @@ requires = [
 
 ]
 
-test_requires = [
+tests_require = [
     "pytest",
-    "tox",
 ]
 
 setup(name="rustytypes",
@@ -25,4 +24,5 @@ setup(name="rustytypes",
       keywords=["rust"],
       include_package_data=True,
       test_suite="tests",
+      tests_require=tests_require,
       install_requires=requires)
