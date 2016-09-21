@@ -86,7 +86,7 @@ Although this approach is also somewhat Pythonic, using isinstance yourself is u
 
 Now, both of these approaches aren't at all inherintely bad and can definitely be leveraged correctly. But they aren't particularly readable or nice to work with.
 
-Here, the `Result` type would allows you to return a data wrapper that can be checked as to whether it is expected or indicates a problem regardless of whether or not the underlying data is of the same or a similar type:
+Here, the `Result` type allows you to return one of two data wrappers: `Ok(data)` or `Err(data)`. They have the same methods, but each return different results. Taking advantage of duck typing, we can determine if the underlying data was returned from a successful call or not:
 
 ```python
 from rusty_types.result import Err, Ok, Result
@@ -131,7 +131,21 @@ class View:
         # Proceed
 ```
 
-Personally, I find this approach much easier to read and I immediately can infer what the code is trying to do without having to reason about a try/except block or a manual isinstance check. Best of all, they should work with static typecheckers such as [mypy][mypy]. If not, please file a bug!
+Personally, I find this approach much easier to read and I immediately can infer what the code is trying to do without having to reason about a try/except block or a manual isinstance check.
+
+Best of all, because `Result`'s internal isinstance check is overriden, `Ok` and `Err` will be seen as instances if and only if they have the correct value type:
+
+```python
+result = Result[int, str]
+
+assert isinstance(Ok(1), result)
+assert isinstance(Err("foo"), result)
+
+assert not isinstance(Ok("foo"), result)
+assert not isinstance(Err(1), result)
+```
+
+Note, you wouldn't normally be making these isinstance calls in your actual code. But, this means they should work well with static typecheckers such as [mypy][mypy]. If not, please file a bug!
 
 ## 3. Documentation
 
