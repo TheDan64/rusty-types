@@ -9,4 +9,4 @@ install:
   - ./setup.py develop
   - pip install pytest pytest-cov
 script:
-  - py.test --cov=rust_types --cov-report term-missing tests/
+  - py.test --cov=rusty_types --cov-report term-missing tests/
