@@ -3,17 +3,15 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [0.1.0] - Unreleased
 ### Added
-- rusty_types/base.py
-  - _Uninstantiable - TODO
-  - _BaseMeta - TODO
-  - _BasePositional - TODO
 - rusty_types/either.py
-  - Either - A class that can contain a left or right type
-  - Left - TODO
-  - Right - TODO
-  - _EitherMeta - TODO
+  - Either[L, R] - A class that can contain a left or right type
+  - Left(L) - Instance of Either that can take a value of type L
+  - Right(R) - Instance of Either that can take a value of type R
+- rusty_types/option.py
+  - Option[T] - A class that can optionally contain a type
+  - Some(T) - Instance of Option that can take a value of type T
+  - Nothing - Singleton instance of Option
 - rusty_types/result.py
-  - Result - A class that can contain an ok or err type
-  - Ok - TODO
-  - Err - TODO
-  - _ResultMeta - TODO
+  - Result[O, E] - A class that can contain an ok or err type
+  - Ok(O) - Instance of Result that can take a value of type O
+  - Err(E) - Instance of Result that can take a value of type E

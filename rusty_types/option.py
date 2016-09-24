@@ -33,5 +33,6 @@ class _OptionMeta(_EitherMeta):
 
         return self.__class__(self.__name__, self.__bases__, dict(self.__dict__), (parameter, type(None)))
 
+
 class Option(Either, metaclass=_OptionMeta):
     pass
