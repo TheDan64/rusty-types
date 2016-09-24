@@ -2,18 +2,18 @@ from rusty_types.base import _BaseMeta, _BasePositional, _Uninstantiable
 
 
 class Left(_BasePositional):
-    def is_left(self):
+    def is_left(self) -> bool:
         return True
 
-    def is_right(self):
+    def is_right(self) -> bool:
         return False
 
 
 class Right(_BasePositional):
-    def is_left(self):
+    def is_left(self) -> bool:
         return False
 
-    def is_right(self):
+    def is_right(self) -> bool:
         return True
 
 
@@ -24,12 +24,12 @@ class _EitherMeta(_BaseMeta):
     def __new__(cls, name, bases, namespace, parameters=None):
         if parameters is None:
             return super().__new__(cls, name, bases, namespace)
-
+        print(parameters)
         if not isinstance(parameters, tuple):
-            raise TypeError("A {} must be constructed as {}[{}_type, {}_type]".format(cls.qualname,
-                                                                                      cls.qualname,
-                                                                                      cls.__left_class__.qualname,
-                                                                                      cls.__right_class__.qualname))
+            raise TypeError("A {} must be constructed as {}[{}_type, {}_type]".format(cls.__qualname__,
+                                                                                      cls.__qualname__,
+                                                                                      cls.__left_class__.__qualname__,
+                                                                                      cls.__right_class__.__qualname__))
 
         left_type, right_type = parameters
 
@@ -55,7 +55,8 @@ class _EitherMeta(_BaseMeta):
 
         return r
 
-    def __instancecheck__(self, obj):
+    def __instancecheck__(self, obj) -> bool:
+        # REVIEW: Is this check needed?
         if not self.__left_type__ or not self.__right_type__:
             return False
 
@@ -64,16 +65,14 @@ class _EitherMeta(_BaseMeta):
         if isinstance(obj, self.__right_class__):
             return isinstance(obj.value, self.__right_type__)
 
-        # Raise NotImplemented?
-        raise TypeError("Result cannot be used with isinstance().")
+        return False
 
     def __getitem__(self, parameters):
         if not isinstance(parameters, tuple) or len(parameters) != 2:
-            # FIXME
-            raise TypeError("A {} must be constructed as {}[{}_type, {}_type]".format(self.qualname,
-                                                                                      self.qualname,
-                                                                                      self.__left_class__.qualname,
-                                                                                      self.__right_class__.qualname))
+            raise TypeError("{} must be constructed as {}[{}_type, {}_type]".format(self.__name__,
+                                                                                    self.__name__,
+                                                                                    self.__left_class__.__name__,
+                                                                                    self.__right_class__.__name__))
 
         return self.__class__(self.__name__, self.__bases__, dict(self.__dict__), parameters)
 

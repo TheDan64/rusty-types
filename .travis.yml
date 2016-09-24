@@ -7,6 +7,6 @@ python:
   - "pypy3"
 install:
   - ./setup.py develop
-  - pip install pytest
+  - pip install pytest pytest-cov
 script:
-  - py.test
+  - py.test --cov=rust_types --cov-report term-missing tests/

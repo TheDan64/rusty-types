@@ -3,7 +3,12 @@
 
 class _Uninstantiable:
     def __new__(self, *args, **kwargs):
-        raise TypeError("Cannot instantiate %r" % self.__class__)
+        name = self.__class__
+
+        if isinstance(self, type):
+            name = self.__name__
+
+        raise TypeError("Cannot instantiate %r" % name)
 
 
 class _BaseMeta(type):
@@ -14,11 +19,7 @@ class _BaseMeta(type):
         pass
 
     def __repr__(self):
-        return "{}.{}".format(self.__module__, self.qualname)
-
-    @property
-    def qualname(self):
-        return getattr(self, "__qualname__", self.__name__)
+        return "{}.{}".format(self.__module__, self.__name__)
 
     def __subclasscheck__(self, cls):  # FIXME
         # if cls is Any:
@@ -33,7 +34,3 @@ class _BasePositional:
     @property
     def value(self):
         return self._value
-
-    @property
-    def qualname(self):
-        return getattr(self, "__qualname__", self.__name__)

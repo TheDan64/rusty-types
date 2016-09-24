@@ -37,6 +37,14 @@ def test_right():
     assert Right(1).value == 1
 
 
+def test_invalid_parameters():
+    with pytest.raises(TypeError):
+        Either[int]
+
+    with pytest.raises(TypeError):
+        Either[int, str, int]
+
+
 def test_typehint_support():
     def foo(either: Either[int, str]) -> Either[str, int]:
         return Left("foo") if either.is_right() else Right(1)
@@ -50,6 +58,7 @@ def test_typing_support():
 
     assert isinstance(Right([{"foo": "bar"}]), either)
     assert not isinstance(Right({"foo": "bar"}), either)
+    assert not isinstance(1, either)
 
     # REVIEW: Doesn't seem supported by typings?
     # assert not isinstance(Right([{"foo": None}]), either)

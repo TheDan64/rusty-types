@@ -3,18 +3,18 @@ from rusty_types.base import _BasePositional
 
 
 class Ok(_BasePositional):
-    def is_ok(self):
+    def is_ok(self) -> bool:
         return True
 
-    def is_err(self):
+    def is_err(self) -> bool:
         return False
 
 
 class Err(_BasePositional):
-    def is_ok(self):
+    def is_ok(self) -> bool:
         return False
 
-    def is_err(self):
+    def is_err(self) -> bool:
         return True
 
 

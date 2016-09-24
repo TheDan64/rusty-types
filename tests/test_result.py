@@ -37,6 +37,14 @@ def test_err():
     assert Err(1).value == 1
 
 
+def test_invalid_parameters():
+    with pytest.raises(TypeError):
+        Result[int]
+
+    with pytest.raises(TypeError):
+        Result[int, str, int]
+
+
 def test_typehint_support():
     def foo(result: Result[int, str]) -> Result[str, int]:
         return Ok("foo") if result.is_err() else Err(1)
@@ -50,6 +58,7 @@ def test_typing_support():
 
     assert isinstance(Err([{"foo": "bar"}]), result)
     assert not isinstance(Err({"foo": "bar"}), result)
+    assert not isinstance(1, result)
 
     # REVIEW: Doesn't seem supported by type hints?
     # assert not isinstance(Err([{"foo": None}]), result)
