@@ -12,7 +12,6 @@ Although some might see it as unPythonic, Rusty Types provides some classes that
 Suppose we'd like to aggregate some errors in an HTTP request to our server. A Pythonic approach might be to use exceptions to pass up the error data and return only on a valid success:
 
 ```python
-from rusty_types.result import Err, Ok, Result
 from typing import Dict, List
 
 def extract_special_values(json_dict) -> List[int]:
@@ -51,7 +50,6 @@ Here, we raise and subsequently catch one exception just to capture the underlyi
 Now let's look at returing the error collection in a Pythonic manner. Let's hope your return types aren't too similar:
 
 ```python
-from rusty_types.result import Err, Ok, Result
 from typing import Any, Dict, List
 
 def extract_special_values(json_dict) -> Union[List[int], List[Dict[str, Any]]]:
