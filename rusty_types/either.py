@@ -24,7 +24,7 @@ class _EitherMeta(_BaseMeta):
     def __new__(cls, name, bases, namespace, parameters=None):
         if parameters is None:
             return super().__new__(cls, name, bases, namespace)
-        print(parameters)
+
         if not isinstance(parameters, tuple):
             raise TypeError("A {} must be constructed as {}[{}_type, {}_type]".format(cls.__qualname__,
                                                                                       cls.__qualname__,
