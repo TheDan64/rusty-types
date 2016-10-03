@@ -73,11 +73,11 @@ class View:
     def get_request(self, payload):
         error_list = []
 
-        value = extract_special_values(payload)
+        values = extract_special_values(payload)
 
         # Both return lists, so we have to check the inner type as well:
-        if isinstance(result, List[Dict[str, Any]]):
-            error_list.append(result.value)
+        if isinstance(values, List[Dict[str, Any]]):
+            error_list.append(values)
 
             raise HTTPBadRequest(error_list)
 
