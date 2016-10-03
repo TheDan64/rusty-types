@@ -31,18 +31,17 @@ def extract_special_values(json_dict) -> List[int]:
 
     return [foo, ...]
 
-class View:
-    def get_request(self, payload):
-        error_list = []
+def get_request(self, payload):
+    error_list = []
 
-        try:
-            values = extract_special_values(payload)
-        except MyCustomException as e:
-            error_list.append(e.errors)
+    try:
+        values = extract_special_values(payload)
+    except MyCustomException as e:
+        error_list.append(e.errors)
 
-            raise HTTPBadRequest(error_list)
+        raise HTTPBadRequest(error_list)
 
-        # Success! Use values
+    # Success! Use values
 ```
 
 Here, we raise and subsequently catch one exception just to capture the underlying data and raise another exception to pass to our web framework of choice to display. This approach is sort of bulky and ugly to look at, but totally Pythonic.
@@ -69,19 +68,18 @@ def extract_special_values(json_dict) -> Union[List[int], List[Dict[str, Any]]]:
 
     return [foo, ...]
 
-class View:
-    def get_request(self, payload):
-        error_list = []
+def get_request(self, payload):
+    error_list = []
 
-        values = extract_special_values(payload)
+    values = extract_special_values(payload)
 
-        # Both return lists, so we have to check the inner type as well:
-        if isinstance(values, List[Dict[str, Any]]):
-            error_list.append(values)
+    # Both return lists, so we have to check the inner type as well:
+    if isinstance(values, List[Dict[str, Any]]):
+        error_list.append(values)
 
-            raise HTTPBadRequest(error_list)
+        raise HTTPBadRequest(error_list)
 
-        # Success! Use values
+    # Success! Use values
 ```
 
 Now you might be thinking, "Hold up! isinstance?! What gives? I thought you said the next example would be Pythonic?" Well, it is. We're not checking whether our value is an instance of a specific type, but of an [Abstract Base Class][abcs]. ABCs define a set of methods which describe the behavior of a type rather than looking at the actual type itself. I tend to think this approach at least, *looks* a little bit easier to read.
@@ -111,20 +109,19 @@ def extract_special_values(json_dict) -> Result[List[int], List[Dict[str, Any]]]
 
     return Ok([foo, ...])
 
-class View:
-    def get_request(self, payload):
-        error_list = []
+def get_request(self, payload):
+    error_list = []
 
-        result = extract_special_values(payload)
+    result = extract_special_values(payload)
 
-        if result.is_err():
-            error_list.append(result.value)
+    if result.is_err():
+        error_list.append(result.value)
 
-            raise HTTPBadRequest(error_list)
+        raise HTTPBadRequest(error_list)
 
-        values = result.value
+    values = result.value
 
-        # Success! Use values
+    # Success! Use values
 ```
 
 Personally, I find this approach much easier to read and I immediately can infer what the code is trying to do without having to reason about a try/except block or a manual isinstance check.
