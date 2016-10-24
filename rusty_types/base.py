@@ -21,16 +21,20 @@ class _BaseMeta(type):
     def __repr__(self):
         return "{}.{}".format(self.__module__, self.__name__)
 
-    def __subclasscheck__(self, cls):  # FIXME
-        # if cls is Any:
-        #     return True
-        return True
-
 
 class _BasePositional:
     def __init__(self, value=None):
         self._value = value
 
-    @property
-    def value(self):
+    def __repr__(self):
+        r = "{}.{}".format(self.__module__, self.__class__.__name__)
+
+        try:
+            r += "({})".format(self.unwrap())
+        except ValueError:
+            pass
+
+        return r
+
+    def unwrap(self):
         return self._value

@@ -20,7 +20,7 @@ def test_left():
     assert isinstance(Left(), either)
     assert Left(1).is_left()
     assert not Left(1).is_right()
-    assert Left(1).value == 1
+    assert Left(1).unwrap() == 1
 
 
 def test_right():
@@ -34,7 +34,7 @@ def test_right():
     assert isinstance(Right(), either)
     assert Right(1).is_right()
     assert not Right(1).is_left()
-    assert Right(1).value == 1
+    assert Right(1).unwrap() == 1
 
 
 def test_invalid_parameters():

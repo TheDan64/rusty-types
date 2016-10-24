@@ -17,6 +17,9 @@ class _Nothing(_BasePositional):
     def is_nothing(self) -> bool:
         return True
 
+    def unwrap(self):
+        raise ValueError("Called unwrap() on a Nothing value")
+
 
 Nothing = _Nothing()
 

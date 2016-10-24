@@ -23,7 +23,7 @@ def test_some():
     assert isinstance(Some(), option)
     assert Some(1).is_some()
     assert not Some(1).is_nothing()
-    assert Some(1).value == 1
+    assert Some(1).unwrap() == 1
 
 
 def test_nothing():
@@ -36,6 +36,9 @@ def test_nothing():
     assert Nothing.is_nothing()
     assert not Nothing.is_some()
 
+    with pytest.raises(ValueError):
+        Nothing.unwrap()
+
 
 def test_invalid_parameters():
     with pytest.raises(TypeError):
@@ -43,8 +46,8 @@ def test_invalid_parameters():
 
 
 def test_typehint_support():
-    def foo(result: Option[int]) -> Option[str]:
-        return Some("foo") if result.is_nothing() else Nothing
+    def foo(option: Option[int]) -> Option[str]:
+        return Some("foo") if option.is_nothing() else Nothing
 
 
 @pytest.mark.skipif(sys.version_info < (3, 5), reason="Typing available in Py3.5+ only")

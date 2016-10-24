@@ -30,7 +30,6 @@ class _EitherMeta(_BaseMeta):
                                                                                       cls.__qualname__,
                                                                                       cls.__left_class__.__qualname__,
                                                                                       cls.__right_class__.__qualname__))
-
         left_type, right_type = parameters
 
         if left_type is None:
@@ -61,9 +60,10 @@ class _EitherMeta(_BaseMeta):
             return False
 
         if isinstance(obj, self.__left_class__):
-            return isinstance(obj.value, self.__left_type__)
+            return isinstance(obj._value, self.__left_type__)
+
         if isinstance(obj, self.__right_class__):
-            return isinstance(obj.value, self.__right_type__)
+            return isinstance(obj._value, self.__right_type__)
 
         return False
 

@@ -20,7 +20,7 @@ def test_ok():
     assert isinstance(Ok(), result)
     assert Ok(1).is_ok()
     assert not Ok(1).is_err()
-    assert Ok(1).value == 1
+    assert Ok(1).unwrap() == 1
 
 
 def test_err():
@@ -34,7 +34,7 @@ def test_err():
     assert isinstance(Err(), result)
     assert Err(1).is_err()
     assert not Err(1).is_ok()
-    assert Err(1).value == 1
+    assert Err(1).unwrap() == 1
 
 
 def test_invalid_parameters():

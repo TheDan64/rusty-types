@@ -115,18 +115,18 @@ def get_request(self, payload):
     result = extract_special_values(payload)
 
     if result.is_err():
-        error_list.append(result.value)
+        error_list.append(result.unwrap())
 
         raise HTTPBadRequest(error_list)
 
-    values = result.value
+    values = result.unwrap()
 
     # Success! Use values
 ```
 
 Personally, I find this approach much easier to read and I immediately can infer what the code is trying to do without having to reason about a try/except block or a manual isinstance check.
 
-Best of all, because `Result`'s internal isinstance check is overriden, `Ok` and `Err` will be seen as instances if and only if they have the correct value type:
+Best of all, because `Result`'s internal isinstance check is overriden, `Ok` and `Err` will be seen as instances if and only if they have the correct inner value type:
 
 ```python
 result = Result[int, str]
@@ -138,11 +138,64 @@ assert not isinstance(Ok("foo"), result)
 assert not isinstance(Err(1), result)
 ```
 
-Note, you wouldn't normally be making these isinstance calls in your actual code. But, this means they should work well with static typecheckers such as [mypy][mypy]. If not, please file a bug!
+Note: You wouldn't normally be making these isinstance calls in your actual code. But, this means they should work well with static typecheckers such as [mypy][mypy]. If not, please file a bug!
 
 ## 3. Documentation
 
+### Either
+
 TODO :)
+
+### Result
+
+TODO (:
+
+### Option
+
+TODO :)
+
+## 4. Planned Features
+
+All syntax is very TBD but here is a preview of what might be added.
+
+### Custom Types
+
+Custom types would allow for tagged union-like classes that can have a lot more variants than the types already provided.
+
+Suppose we wanted to create a custom type that has three distinct variants. One of which allows for a generic type, T:
+```python
+class CustomType(TaggedUnion):
+    A(int)
+    B(float, T)
+    C
+```
+
+This would allow us to return values based around those types:
+```python
+# Note that str would fill in for T above and any of these returns would be valid:
+def foo() -> CustomType[str]:
+    return A(1)
+    return B(3.14, "bar")
+    return C
+```
+
+### Pattern Matching
+
+Having to call `.unwrap()` is more of a placeholder for now. It'll still exist long term but the preferred way to get a value would be to match it directly.
+
+For example, today:
+```python
+if option.is_some():
+    print(option.unwrap())
+```
+
+Would ideally become something like pattern matching in other languages:
+```python
+match(option, Some(value)):
+    print(value)
+```
+
+Of course, Python doesn't give us a lot of room to work with. Suggestions and ideas are welcome!
 
 [abcs]: https://docs.python.org/3/library/abc.html
 [type-hints]: https://www.python.org/dev/peps/pep-0484/
