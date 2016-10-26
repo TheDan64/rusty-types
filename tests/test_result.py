@@ -44,6 +44,19 @@ def test_invalid_parameters():
     with pytest.raises(TypeError):
         Result[int, str, int]
 
+    with pytest.raises(TypeError):
+        Result[1, 3]
+
+def test_tuple():
+    result = Result[(int, float), str]
+
+    assert isinstance(Ok((1, 1.1)), result)
+    assert not isinstance(Ok((1, "str")), result)
+
+    result = Result[str, (int, float)]
+
+    assert isinstance(Err((1, 1.1)), result)
+    assert not isinstance(Err((1, "str")), result)
 
 def test_typehint_support():
     def foo(result: Result[int, str]) -> Result[str, int]:

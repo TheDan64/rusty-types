@@ -44,6 +44,30 @@ def test_invalid_parameters():
     with pytest.raises(TypeError):
         Option[int, str]
 
+    with pytest.raises(TypeError):
+        Option[(int, float), str]
+
+    with pytest.raises(TypeError):
+        Option[1]
+
+    with pytest.raises(TypeError):
+        Option[1,]
+
+
+def test_tuple():
+    option = Option[(int, float),]
+
+    assert isinstance(Some((1, 1.1)), option)
+    assert not isinstance(Some((1, "str")), option)
+
+    option = Option[(int, (float, str)),]
+
+    assert isinstance(Some((1, (1.1, "foo"))), option)
+
+    option = Option[(int, (float, (str, list))),]
+
+    assert isinstance(Some((1, (1.1, ("foo", [1, 2])))), option)
+
 
 def test_typehint_support():
     def foo(option: Option[int]) -> Option[str]:

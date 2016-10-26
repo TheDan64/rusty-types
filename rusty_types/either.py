@@ -1,4 +1,4 @@
-from rusty_types.base import _BaseMeta, _BasePositional, _Uninstantiable
+from rusty_types.base import _BaseMeta, _BasePositional, _OrderedMultiType, _Uninstantiable
 
 
 class Left(_BasePositional):
@@ -37,6 +37,18 @@ class _EitherMeta(_BaseMeta):
 
         if right_type is None:
             right_type = type(None)
+
+        if isinstance(left_type, tuple):
+            left_type = _OrderedMultiType[left_type]
+
+        if isinstance(right_type, tuple):
+            right_type = _OrderedMultiType[right_type]
+
+        if not isinstance(left_type, type):
+            raise TypeError("Type parameters must be types. Found a {}".format(left_type))
+
+        if not isinstance(right_type, type):
+            raise TypeError("Type parameters must be types. Found a {}".format(right_type))
 
         self = super().__new__(cls, name, bases, {})
 

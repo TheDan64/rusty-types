@@ -44,6 +44,24 @@ def test_invalid_parameters():
     with pytest.raises(TypeError):
         Either[int, str, int]
 
+    with pytest.raises(TypeError):
+        Either[1, 3]
+
+    with pytest.raises(TypeError):
+        Either[int, 3]
+
+
+def test_tuple():
+    either = Either[(int, float), str]
+
+    assert isinstance(Left((1, 1.1)), either)
+    assert not isinstance(Left((1, "str")), either)
+
+    either = Either[str, (int, float)]
+
+    assert isinstance(Right((1, 1.1)), either)
+    assert not isinstance(Right((1, "str")), either)
+
 
 def test_typehint_support():
     def foo(either: Either[int, str]) -> Either[str, int]:
