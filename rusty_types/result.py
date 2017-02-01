@@ -1,27 +1,34 @@
-from rusty_types.either import Either, _EitherMeta
-from rusty_types.base import _BasePositional
+from typing import ClassVar, Generic, TypeVar, Union
+
+O = TypeVar('O')
+E = TypeVar('E')
 
 
-class Ok(_BasePositional):
+class Ok(Generic[O]):
+    def __init__(self, value: O) -> None:
+        self._value = value
+
     def is_ok(self) -> bool:
         return True
 
     def is_err(self) -> bool:
         return False
 
+    def unwrap(self) -> O:
+        return self._value
 
-class Err(_BasePositional):
+
+class Err(Generic[E]):
+    def __init__(self, value: E) -> None:
+        self._value = value
+
     def is_ok(self) -> bool:
         return False
 
     def is_err(self) -> bool:
         return True
 
+    def unwrap(self) -> E:
+        return self._value
 
-class _ResultMeta(_EitherMeta):
-    __left_class__ = Ok
-    __right_class__ = Err
-
-
-class Result(Either, metaclass=_ResultMeta):
-    pass
+Result = Union[Ok[O], Err[E]]

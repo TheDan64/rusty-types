@@ -8,7 +8,13 @@ Python 3's [type hints][type-hints] and [typing][typing] module help code readab
 
 Although some might see it as unPythonic, Rusty Types provides some classes that act like specialized monads more commonly seen in languages such as Rust and Haskell. Type hints and the typings module really help this approach to shine.
 
-## 2. Example
+## 2. Installation
+Rusty Types works with all versions of Python 3, however there may be a version specific requirements:
+* 3.0 - 3.4: typing library, version 3.5.3 or higher (is a dependency)
+* 3.5: Python must be version 3.5.3+
+* 3.6: None!
+
+## 3. Usage
 Suppose we'd like to aggregate some errors in an HTTP request to our server. A Pythonic approach might be to use exceptions to pass up the error data and return only on a valid success:
 
 ```python
@@ -140,7 +146,7 @@ assert not isinstance(Err(1), result)
 
 Note: You wouldn't normally be making these isinstance calls in your actual code. But, this means they should work well with static typecheckers such as [mypy][mypy]. If not, please file a bug!
 
-## 3. Documentation
+## 4. Documentation
 
 ### Either
 
@@ -154,7 +160,7 @@ TODO (:
 
 TODO :)
 
-## 4. Planned Features
+## 5. Planned Features
 
 All syntax is very TBD but here is a preview of what might be added.
 
